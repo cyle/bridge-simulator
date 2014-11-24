@@ -1,0 +1,72 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic);
+
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+body, input, textarea {
+	font-family: 'Lato', 'Verdana', sans-serif;
+	font-size: 14px;
+}
+
+body {
+	background-color: #111;
+	color: #eee;
+}
+
+div.top-bar-dashboard {
+	background-color: #222;
+}
+
+div.top-bar-dashboard > div {
+	float: left;
+	width: 130px;
+	padding: 0.2em;
+}
+
+div.top-bar-dashboard div.console-name {
+	font-weight: 700;
+}
+
+div.top-bar-dashboard div.hull-points {
+	color: #ff685b;
+}
+
+div.top-bar-dashboard div.shield-points {
+	color: #6794ff;
+}
+
+div.top-bar-dashboard div.energy-usage {
+	color: #00b937;
+}
+
+div.warning-indicator-panel > div.warning-indicator {
+	margin: 1em;
+}
+
+div.warning-indicator {
+	width: 150px;
+	padding: 1em;
+	color: #777;
+	background-color: #333;
+	border-radius: 3px;
+	text-align: center;
+	cursor: default;
+	font-size: 16px;
+}
+
+div.warning-indicator.on {
+	background-color: red;
+	color: white;
+	font-weight: 900;
+}
+
+div.dummy {
+	clear: both !important;
+	float: none !important;
+	height: 0 !important;
+	width: 0 !important;
+	padding: 0 !important;
+}

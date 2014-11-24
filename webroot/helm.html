@@ -1,0 +1,77 @@
+<!doctype html>
+<head>
+<title>THE HELM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="ship.css" />
+</head>
+<body>
+
+<div class="top-bar-dashboard">
+<div class="console-name">HELM</div>
+<div class="hull-points">100/100 HP</div>
+<div class="shield-points">100/100 SP</div>
+<div class="energy-usage">56/100 E</div>
+<div class="dummy"></div>
+</div>
+
+<!--
+
+	helm/conn needs...
+		- navigation sensors = basic map of area around the ship
+			- markers for objects in space
+				- arrow-up means above, arrow-down means below, circle means same level
+			- see current weapon target (red ring), current sensor target (blue ring)
+		- current engine status (if damaged, if being repaired, how much energy is allotted)
+			- fun Apollo-style grid of warning lights? random conditions (overheat, etc)
+		- current speed (min and max speed, based on energy to engines)
+		- current direction, two 0-to-360 values
+			- first number being port to starpoint -- 0 is forward, 180 is opposite, 90 is right, 270 is left
+			- second number being up to down elevation -- 0 is forward, 180 inverted, 90 is straight up, 270 is straight down
+		- controls to change speed (set exactly, or in +/- 1/4 increments, or all-full or all-stop)
+		- controls to change direction (in degrees)
+		- warp controls
+
+-->
+
+<canvas id="ram_scoop_toggle" nx="toggle" width="100" height="100"></canvas>
+<canvas id="dial_test" nx="dial"></canvas>
+<canvas id="speed_slider" nx="slider" width="100" height="100"></canvas>
+
+<div class="warning-indicator-panel">
+<div class="warning-indicator">Warning Off</div>
+<div class="warning-indicator on">Warning On!</div>
+</div>
+
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="nexusUI.js"></script>
+<script>
+
+var socket = io();
+
+// sending events to server:
+// socket.emit('event name to server', { "something": "what" });
+
+// receiving events from server:
+// socket.on('event name from server', function(msg) {  });
+
+nx.onload = function() {
+	nx.colorize("#00FF00");
+	nx.colorize("border", "#333");
+	nx.colorize("fill", "#333");
+	//nx.sendsTo("none");
+	nx.sendsTo("js");
+	ram_scoop_toggle.response = function(data) {
+		//console.log(data);
+	}
+	dial_test.response = function(data) {
+		//console.log(data);
+	}
+	speed_slider.response = function(data) {
+		//console.log(data.value);
+	}
+}
+
+</script>
+</body>
+</html>

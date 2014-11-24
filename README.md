@@ -22,11 +22,11 @@ You heard me. This is a cooperative starship bridge simulator game, like [Artemi
 		- NexusUI http://www.nexusosc.com/nexusTutorials/
 		- KievII http://kievii.net/
 - different stations for each player
-	- helm: drives the ship, sets course and speed
+	- helm: drives the ship, sets course and speed, basic map
 	- weapons: fires weapons, set weapon power levels, target locks
-	- communications: hails, diplomacy
+	- communications/ops: hails, diplomacy, basic sensors, decoding
 	- captain: better dashboard, can set yellow/red alert
-	- science: scans, probes
+	- science: scans, probes, advanced sensors, environmental controls
 	- engineering: sets power levels, what's fixed next
 - if fewer than six people, you can double-duty stations:
 	- helm/weapons
@@ -35,7 +35,8 @@ You heard me. This is a cooperative starship bridge simulator game, like [Artemi
 - all stations have a basic at-a-glance dashboard
 	- current ship hull points / shields
 	- current ship energy usage / max
-	- who's at what station
+	- who's at what station? player list?
+	- unique name of your instance?
 - SpaceTeam-like random events at terminals
 	- fix the inverse power coupling!
 - pick your starting ship...
@@ -44,3 +45,7 @@ You heard me. This is a cooperative starship bridge simulator game, like [Artemi
 - pick your mission/episode...
 	- or randomize!
 	- or simply "play now"
+- ranks / experience points / achievements
+	- more you play, more XP you get, special abilities as you rank up
+	- ensign -> lieutenant jr -> lieutenant -> lieutenant commander -> commander -> captain
+	- commodore -> rear admiral -> vice admiral -> admiral -> fleet admiral

@@ -7,9 +7,13 @@
 
 */
 
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
+// serve static files from webroot
+app.use(express.static('webroot'));
 
 // express crap, serve the index page
 app.get('/', function(req, res) {
@@ -31,6 +35,6 @@ io.on('connection', function(socket) {
 });
 
 // listen, duh
-http.listen(3000, function() {
+http.listen(33333, function() {
 	console.log('Listening on *:33333');
 });
