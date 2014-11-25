@@ -1,0 +1,63 @@
+<!doctype html>
+<head>
+<title>UI tests</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.slider {
+	background-color: red;
+	border-radius: 4px;
+}
+.slider-inside {
+	background-color: #333;
+	height: 50%;
+	position: relative;
+	bottom: 0;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="slider" style="width: 100px; height: 400px;" data-max="100" data-min="0">
+<div class="slider-inside"></div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+
+var slider_mouse_clicked = false;
+
+$('.slider').mousedown(function(e) {
+	var y = e.pageY - e.target.offsetTop;
+	$('.slider-inside').css('height', y + 'px');
+	slider_mouse_clicked = true;
+});
+
+$('.slider').mouseup(function(e) {
+	slider_mouse_clicked = false;
+	slider_updated();
+});
+
+$('.slider').mousemove(function(e) {
+	if (slider_mouse_clicked) {
+		var y = e.pageY - e.target.offsetTop;
+		$('.slider-inside').css('height', y + 'px');
+		slider_updated();
+	}
+});
+
+function slider_updated() {
+	var slider_height_string = $('.slider').css('height');
+	var inside_height_string = $('.slider-inside').css('height');
+	var slider_height = slider_height_string.substring(0, slider_height_string.length - 2) * 1;
+	var inside_height = inside_height_string.substring(0, inside_height_string.length - 2) * 1;
+	var percentage = 1 - (inside_height / slider_height);
+	console.log(slider_height);
+	console.log(inside_height);
+	console.log(percentage);
+}
+
+</script>
+</body>
+</html>

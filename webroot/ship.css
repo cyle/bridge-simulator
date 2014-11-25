@@ -1,5 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic);
 
+/* general stuff */
+
 * {
 	padding: 0;
 	margin: 0;
@@ -15,6 +17,8 @@ body {
 	background-color: #111;
 	color: #eee;
 }
+
+/* top dashboard */
 
 div.top-bar-dashboard {
 	background-color: #222;
@@ -42,8 +46,34 @@ div.top-bar-dashboard div.energy-usage {
 	color: #00b937;
 }
 
+/* basic interface elements */
+
+div.button {
+	width: 150px;
+	padding: 1em;
+	color: #white;
+	background-color: #27981B;
+	border-radius: 3px;
+	text-align: center;
+	cursor: pointer;
+	font-size: 16px;
+	margin-bottom: 0.5em;
+}
+
+canvas[nx="toggle"] {
+	display: block;
+}
+
+div.dummy {
+	clear: both !important;
+	float: none !important;
+	height: 0 !important;
+	width: 0 !important;
+	padding: 0 !important;
+}
+
 div.warning-indicator-panel > div.warning-indicator {
-	margin: 1em;
+	/*margin: 1em;*/
 }
 
 div.warning-indicator {
@@ -55,6 +85,7 @@ div.warning-indicator {
 	text-align: center;
 	cursor: default;
 	font-size: 16px;
+	margin-bottom: 1em;
 }
 
 div.warning-indicator.on {
@@ -63,10 +94,34 @@ div.warning-indicator.on {
 	font-weight: 900;
 }
 
-div.dummy {
-	clear: both !important;
-	float: none !important;
-	height: 0 !important;
-	width: 0 !important;
-	padding: 0 !important;
+/* helm stuff */
+
+body#helm div.map {
+	width: 500px;
+	height: 500px;
+	float: left;
+}
+
+body#helm div.right-panel {
+	margin-left: 500px;
+	padding: 10px;
+}
+
+body#helm div.right-subpanel {
+	float: left;
+	padding: 10px;
+}
+
+body#helm div.toggles canvas {
+	margin-bottom: 1em;
+}
+
+body#helm div.helm-controls {
+	float: left;
+	width: 500px;
+	height: 200px;
+}
+
+body#helm div.indicators {
+	margin-left: 500px;
 }

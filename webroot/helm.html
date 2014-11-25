@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="ship.css" />
 </head>
-<body>
+<body id="helm">
 
 <div class="top-bar-dashboard">
 <div class="console-name">HELM</div>
@@ -33,13 +33,42 @@
 
 -->
 
-<canvas id="ram_scoop_toggle" nx="toggle" width="100" height="100"></canvas>
-<canvas id="dial_test" nx="dial"></canvas>
-<canvas id="speed_slider" nx="slider" width="100" height="100"></canvas>
-
-<div class="warning-indicator-panel">
-<div class="warning-indicator">Warning Off</div>
-<div class="warning-indicator on">Warning On!</div>
+<div class="container">
+	<div class="map">
+		(map)
+	</div>
+	<div class="right-panel">
+		<div class="right-subpanel">
+			<canvas id="speed_slider" nx="slider" width="100" height="400"></canvas>
+		</div>
+		<div class="right-subpanel">
+			<div class="button">FULL</div>
+			<div class="button">+ 1/4</div>
+			<div class="button">- 1/4</div>
+			<div class="button">STOP</div>
+		</div>
+		<div class="right-subpanel toggles">
+			<p>Ram scoop:</p>
+			<canvas id="ram_scoop_toggle" nx="toggle" width="100" height="100"></canvas>
+			<p>Afterburner:</p>
+			<canvas id="other_toggle_1" nx="toggle" width="100" height="100"></canvas>
+			<p>Something else:</p>
+			<canvas id="other_toggle_2" nx="toggle" width="100" height="100"></canvas>
+		</div>
+		<div class="dummy"></div>
+	</div>
+	<div class="dummy"></div>
+	<div class="helm-controls">
+		<canvas id="dial_test_1" nx="dial" width="200" height="200"></canvas>
+		<canvas id="dial_test_2" nx="dial" width="200" height="200"></canvas>
+	</div>
+	<div class="indicators">
+		<div class="warning-indicator-panel">
+			<div class="warning-indicator">Warning Off</div>
+			<div class="warning-indicator on">Warning On!</div>
+		</div>
+	</div>
+	<div class="dummy"></div>
 </div>
 
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -56,7 +85,7 @@ var socket = io();
 // socket.on('event name from server', function(msg) {  });
 
 nx.onload = function() {
-	nx.colorize("#00FF00");
+	nx.colorize("#27981B");
 	nx.colorize("border", "#333");
 	nx.colorize("fill", "#333");
 	//nx.sendsTo("none");
@@ -64,7 +93,7 @@ nx.onload = function() {
 	ram_scoop_toggle.response = function(data) {
 		//console.log(data);
 	}
-	dial_test.response = function(data) {
+	dial_test_1.response = function(data) {
 		//console.log(data);
 	}
 	speed_slider.response = function(data) {
