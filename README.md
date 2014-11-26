@@ -22,11 +22,11 @@ You heard me. This is a cooperative starship bridge simulator game, like [Artemi
 		- NexusUI http://www.nexusosc.com/nexusTutorials/
 		- KievII http://kievii.net/
 - different stations for each player
-	- helm: drives the ship, sets course and speed, basic map
+	- helm: sets course and speed, basic map, warp drive controls, navigation
 	- weapons: fires weapons, set weapon power levels, target locks
 	- communications/ops: hails, diplomacy, basic sensors, decoding
 	- captain: better dashboard, can set yellow/red alert
-	- science: scans, probes, advanced sensors, environmental controls
+	- science/life support: scans, probes, advanced sensors, environmental controls, life support systems
 	- engineering: sets power levels, what's fixed next
 - if fewer than six people, you can double-duty stations:
 	- helm/weapons
@@ -37,6 +37,36 @@ You heard me. This is a cooperative starship bridge simulator game, like [Artemi
 	- current ship energy usage / max
 	- who's at what station? player list?
 	- unique name of your instance?
+- metrics on a ship
+	- main power level
+		- all subsystems use this power
+		- in units-per-second generation
+	- aux power level
+		- if main power shuts down, this comes on
+		- can also be used to boost main power
+		- in units-per-second generation, goes away quickly though
+	- battery boost level
+		- provides a boost to power levels
+		- runs out very quickly
+	- subsystem power levels
+		- weapons
+		- impulse engines/warp drive
+		- communications
+		- navigation
+		- science/sensors
+		- life support
+		- repair/maintenance
+	- environmental metrics
+		- oxygen supply
+		- temperature / climate
+	- torpedo ammunition
+	- whether major systems are on or off
+		- each one uses energy-per-second
+		- impulse engines, warp drive, weapons, etc
+	- whether minor systems are on or off
+		- each one uses energy-per-second
+		- most are subsets of major systems
+		- i.e. probes, ...
 - SpaceTeam-like random events at terminals
 	- fix the inverse power coupling!
 - pick your starting ship...
@@ -49,3 +79,4 @@ You heard me. This is a cooperative starship bridge simulator game, like [Artemi
 	- more you play, more XP you get, special abilities as you rank up
 	- ensign -> lieutenant jr -> lieutenant -> lieutenant commander -> commander -> captain
 	- commodore -> rear admiral -> vice admiral -> admiral -> fleet admiral
+	- ranks give small stat boosts
