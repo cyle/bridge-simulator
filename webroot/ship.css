@@ -18,6 +18,10 @@ body {
 	color: #eee;
 }
 
+p {
+	margin-bottom: 0.75em;
+}
+
 /* top dashboard */
 
 div.top-bar-dashboard {
@@ -51,17 +55,27 @@ div.top-bar-dashboard div.energy-usage {
 div.button {
 	width: 150px;
 	padding: 1em;
-	color: #white;
+	color: white;
 	background-color: #27981B;
 	border-radius: 3px;
 	text-align: center;
 	cursor: pointer;
 	font-size: 16px;
 	margin-bottom: 0.5em;
+	transition: background-color 300ms ease;
 }
 
-canvas[nx="toggle"] {
-	display: block;
+div.button:hover {
+	background-color: #38ba1e;
+}
+
+div.button.toggle.on {
+	background-color: #1a609a;
+}
+
+div.button.toggle.off {
+	background-color: #0d2636;
+	color: #898989;
 }
 
 div.dummy {
@@ -86,6 +100,11 @@ div.warning-indicator {
 	cursor: default;
 	font-size: 16px;
 	margin-bottom: 1em;
+}
+
+div.warning-indicator.off {
+	background-color: #450000;
+	color: #888;
 }
 
 div.warning-indicator.on {

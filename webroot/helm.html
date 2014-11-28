@@ -42,32 +42,33 @@
 	</div>
 	<div class="right-panel">
 		<div class="right-subpanel">
-			<canvas id="speed_slider" nx="slider" width="100" height="400"></canvas>
+			<!-- slider for speed -->
+			<p>Speed: <input id="speed" type="number" min="0" max="100" value="0" step="5" /></p>
+			<p>Max: 100</p>
+			<p>Max: 0</p>
 		</div>
 		<div class="right-subpanel">
 			<div class="button">FULL</div>
-			<div class="button">+ 1/4</div>
-			<div class="button">- 1/4</div>
+			<div class="button">+25%</div>
+			<div class="button">-25%</div>
 			<div class="button">STOP</div>
 		</div>
 		<div class="right-subpanel toggles">
-			<p>Ram scoop:</p>
-			<canvas id="ram_scoop_toggle" nx="toggle" width="100" height="100"></canvas>
-			<p>Afterburner:</p>
-			<canvas id="other_toggle_1" nx="toggle" width="100" height="100"></canvas>
-			<p>Something else:</p>
-			<canvas id="other_toggle_2" nx="toggle" width="100" height="100"></canvas>
+			<!-- toggles -->
+			<div class="button toggle off">Ramscoop Overdrive</div>
+			<div class="button toggle on">Plasma Recycle</div>
 		</div>
 		<div class="dummy"></div>
 	</div>
 	<div class="dummy"></div>
 	<div class="helm-controls">
-		<canvas id="dial_test_1" nx="dial" width="200" height="200"></canvas>
-		<canvas id="dial_test_2" nx="dial" width="200" height="200"></canvas>
+		<!-- pitch = up/down, yaw = left/right, roll = rotation -->
+		<p>Pitch: <input id="pitch" type="number" min="-360" max="360" value="0" step="5" /></p>
+		<p>Yaw: <input id="yaw" type="number" min="-360" max="360" value="0" step="5" /></p>
 	</div>
 	<div class="indicators">
 		<div class="warning-indicator-panel">
-			<div class="warning-indicator">Warning Off</div>
+			<div class="warning-indicator off">Warning Off</div>
 			<div class="warning-indicator on">Warning On!</div>
 		</div>
 	</div>
@@ -76,7 +77,6 @@
 
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="nexusUI.js"></script>
 <script>
 
 var socket = io();
@@ -86,23 +86,6 @@ var socket = io();
 
 // receiving events from server:
 // socket.on('event name from server', function(msg) {  });
-
-nx.onload = function() {
-	nx.colorize("#27981B");
-	nx.colorize("border", "#333");
-	nx.colorize("fill", "#333");
-	//nx.sendsTo("none");
-	nx.sendsTo("js");
-	ram_scoop_toggle.response = function(data) {
-		//console.log(data);
-	}
-	dial_test_1.response = function(data) {
-		//console.log(data);
-	}
-	speed_slider.response = function(data) {
-		//console.log(data.value);
-	}
-}
 
 </script>
 </body>
