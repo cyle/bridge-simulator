@@ -8,9 +8,10 @@
 
 <div class="top-bar-dashboard">
 <div class="console-name">HELM</div>
-<div class="hull-points">100/100 HP</div>
-<div class="shield-points">100/100 SP</div>
-<div class="energy-usage">56/100 E</div>
+<div class="hull-points"><span class="current-hp">100</span>/<span class="max-hp">100</span> HP</div>
+<div class="shield-points"><span class="current-sp">100</span>/<span class="max-sp">100</span> SP</div>
+<div class="energy-usage"><span class="current-e">56</span>/<span class="max-e">100</span> E</div>
+<div class="ship-name">Unknown</div>
 <div class="dummy"></div>
 </div>
 
@@ -21,6 +22,7 @@
 			- markers for objects in space
 				- arrow-up means above, arrow-down means below, circle means same level
 			- see current weapon target (red ring), current sensor target (blue ring)
+		- list of nearby things to navigate towards
 		- current engine status (if damaged, if being repaired, how much energy is allotted)
 			- fun Apollo-style grid of warning lights? random conditions (overheat, etc)
 		- current speed (min and max speed, based on energy to engines)
@@ -38,38 +40,60 @@
 
 <div class="container">
 	<div class="map">
-		(map)
+		<p>(map and entity list)</p>
+		<p>Current Position: <span class="position-x">0</span>, <span class="position-y">0</span>, <span class="position-z">0</span></p>
 	</div>
 	<div class="right-panel">
-		<div class="right-subpanel">
-			<!-- slider for speed -->
-			<p>Speed: <input id="speed" type="number" min="0" max="100" value="0" step="5" /></p>
-			<p>Max: 100</p>
-			<p>Max: 0</p>
+		<div class="right-subpanel speed-controls">
+			<fieldset>
+				<legend>Speed Control 1</legend>
+				<!-- slider for speed -->
+				<p>Speed: <input id="speed" type="number" min="0" max="100" value="0" step="5" /></p>
+				<p>Max: <span class="max-speed">100</span></p>
+				<p>Max: <span calss="min-speed">0</span></p>
+			</fieldset>
 		</div>
-		<div class="right-subpanel">
-			<div class="button">FULL</div>
-			<div class="button">+25%</div>
-			<div class="button">-25%</div>
-			<div class="button">STOP</div>
+		<div class="right-subpanel speed-controls">
+			<fieldset>
+				<legend>Speed Control 2</legend>
+				<div class="button modify-speed-btn" data-speed="100%">FULL</div>
+				<div class="button modify-speed-btn" data-speed="75%">75%</div>
+				<div class="button modify-speed-btn" data-speed="50%">50%</div>
+				<div class="button modify-speed-btn" data-speed="25%">25%</div>
+				<div class="button modify-speed-btn" data-speed="0%">STOP</div>
+			</fieldset>
+			<fieldset>
+				<legend>Speed Control 3</legend>
+				<div class="button modify-speed-btn" data-speed="+25%">+25%</div>
+				<div class="button modify-speed-btn" data-speed="-25%">-25%</div>
+			</fieldset>
 		</div>
 		<div class="right-subpanel toggles">
-			<!-- toggles -->
-			<div class="button toggle off">Ramscoop Overdrive</div>
-			<div class="button toggle on">Plasma Recycle</div>
+			<fieldset>
+				<legend>Overrides</legend>
+				<!-- toggles -->
+				<div class="button toggle" data-toggle-key="ramscoop"></div>
+				<div class="button toggle" data-toggle-key="plasma-recycle"></div>
+			</fieldset>
 		</div>
 		<div class="dummy"></div>
 	</div>
 	<div class="dummy"></div>
 	<div class="helm-controls">
-		<!-- pitch = up/down, yaw = left/right, roll = rotation -->
-		<p>Pitch: <input id="pitch" type="number" min="-360" max="360" value="0" step="5" /></p>
-		<p>Yaw: <input id="yaw" type="number" min="-360" max="360" value="0" step="5" /></p>
+		<fieldset>
+			<legend>Relative Bearing</legend>
+			<!-- pitch = up/down, yaw = left/right, roll = rotation -->
+			<p>Pitch: <input id="pitch" type="number" min="-360" max="360" value="0" step="5" /></p>
+			<p>Yaw: <input id="yaw" type="number" min="-360" max="360" value="0" step="5" /></p>
+		</fieldset>
 	</div>
 	<div class="indicators">
 		<div class="warning-indicator-panel">
-			<div class="warning-indicator off">Warning Off</div>
-			<div class="warning-indicator on">Warning On!</div>
+			<fieldset>
+				<legend>Warnings</legend>
+				<div class="warning-indicator" data-status-key="inertial-damp"></div>
+				<div class="warning-indicator" data-status-key="impulse-control"></div>
+			</fieldset>
 		</div>
 	</div>
 	<div class="dummy"></div>
@@ -79,6 +103,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
 
+var bridge_uuid;
+
 var socket = io();
 
 // sending events to server:
@@ -86,6 +112,138 @@ var socket = io();
 
 // receiving events from server:
 // socket.on('event name from server', function(msg) {  });
+
+$('.modify-speed-btn').click(function() {
+	console.log("changing speed: " + $(this).attr('data-speed'));
+	socket.emit('change-speed', { "uuid": bridge_uuid, "speed": $(this).attr('data-speed') });
+});
+
+$('#speed').change(function() {
+	console.log("changing speed: " + $(this).val());
+	socket.emit('change-speed', { "uuid": bridge_uuid, "speed": $(this).val() });
+});
+
+$('#pitch').change(function() {
+	console.log("changing pitch: " + $(this).val());
+	socket.emit('change-pitch-yaw', { "uuid": bridge_uuid, "pitch": $(this).val() });
+});
+
+$('#yaw').change(function() {
+	console.log("changing yaw: " + $(this).val());
+	socket.emit('change-pitch-yaw', { "uuid": bridge_uuid, "yaw": $(this).val() });
+});
+
+$('.toggle').click(function() {
+	var toggle_key = $(this).attr('data-toggle-key');
+	if ($(this).hasClass('on')) {
+		$(this).addClass('off');
+		$(this).removeClass('on');
+		socket.emit('change-toggle', { "uuid": bridge_uuid, "key": toggle_key, "val": false });
+	} else {
+		$(this).addClass('on');
+		$(this).removeClass('off');
+		socket.emit('change-toggle', { "uuid": bridge_uuid, "key": toggle_key, "val": true });
+	}
+});
+
+socket.emit('ready', { "station": "helm" });
+
+socket.on('joined-bridge', function(data) {
+	console.log('joined bridge!');
+	console.log(data);
+	bridge_uuid = data.uuid;
+	$('.ship-name').html(data.name);
+});
+
+socket.on('current-status', function(data) {
+	console.log('current status update from server');
+	console.log(data);
+	// set display conditions based on current status from server
+	
+	// handle HP, SP, energy
+	if (data.current_hp != undefined) {
+		$('.current-hp').html(data.current_hp);
+	}
+	if (data.current_sp != undefined) {
+		$('.current-sp').html(data.current_sp);
+	}
+	if (data.current_energy != undefined) {
+		$('.current-e').html(data.current_energy);
+	}
+	if (data.max_hp != undefined) {
+		$('.max-hp').html(data.max_hp);
+	}
+	if (data.max_sp != undefined) {
+		$('.max-sp').html(data.max_sp);
+	}
+	if (data.max_energy != undefined) {
+		$('.max-e').html(data.max_energy);
+	}
+	
+	// handle current speed, max speed, min speed
+	if (data.current_speed != undefined) {
+		$('input#speed').val(data.current_speed);
+	}
+	if (data.max_speed != undefined) {
+		$('.max-speed').html(data.max_speed);
+	}
+	if (data.min_speed != undefined) {
+		$('.min-speed').html(data.min_speed);
+	}
+	
+	// handle pitch and yaw
+	if (data.current_pitch != undefined) {
+		$('input#pitch').val(data.current_pitch);
+	}
+	if (data.current_yaw != undefined) {
+		$('input#yaw').val(data.current_yaw);
+	}
+	
+	// handle position
+	if (data.position != undefined) {
+		$('.position-x').html(round_to_tenths(data.position.x));
+		$('.position-y').html(round_to_tenths(data.position.y));
+		$('.position-z').html(round_to_tenths(data.position.z));
+	}
+	
+	// handle statuses, if included
+	if (data.statuses != undefined) {
+		for (var i = 0; i < data.statuses.length; i++) {
+			var element_id = '.warning-indicator[data-status-key="'+data.statuses[i].key+'"]';
+			if ($(element_id).length) {
+				$(element_id).html(data.statuses[i].name);
+				if (data.statuses[i].val == true) {
+					$(element_id).addClass('on');
+					$(element_id).removeClass('off');
+				} else {
+					$(element_id).addClass('off');
+					$(element_id).removeClass('on');
+				}
+			}
+		}
+	}
+	
+	// handle toggles, if included
+	if (data.toggles != undefined) {
+		for (var i = 0; i < data.toggles.length; i++) {
+			var element_id = '.toggle[data-toggle-key="'+data.toggles[i].key+'"]';
+			if ($(element_id).length) {
+				$(element_id).html(data.toggles[i].name);
+				if (data.toggles[i].val == true) {
+					$(element_id).addClass('on');
+					$(element_id).removeClass('off');
+				} else {
+					$(element_id).addClass('off');
+					$(element_id).removeClass('on');
+				}
+			}
+		}
+	}
+});
+
+function round_to_tenths(number) {
+	return Math.round(number * 10)/10;
+}
 
 </script>
 </body>
