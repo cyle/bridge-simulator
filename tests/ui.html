@@ -23,6 +23,23 @@
 <div class="slider-inside"></div>
 </div>
 
+<div>
+<input type="number" id="slider-val" />
+</div>
+
+<div>
+<input type="button" value="+25%" id="plus-twentyfive" />
+<input type="button" value="-25%" id="minus-twentyfive" />
+</div>
+
+<div>
+<input type="button" value="0%" data-percent="0" class="set-percent-btn" />
+<input type="button" value="25%" data-percent="25" class="set-percent-btn" />
+<input type="button" value="50%" data-percent="50" class="set-percent-btn" />
+<input type="button" value="75%" data-percent="75" class="set-percent-btn" />
+<input type="button" value="100%" data-percent="100" class="set-percent-btn" />
+</div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
 
@@ -53,10 +70,70 @@ function slider_updated() {
 	var slider_height = slider_height_string.substring(0, slider_height_string.length - 2) * 1;
 	var inside_height = inside_height_string.substring(0, inside_height_string.length - 2) * 1;
 	var percentage = 1 - (inside_height / slider_height);
-	console.log(slider_height);
-	console.log(inside_height);
-	console.log(percentage);
+	//console.log(slider_height);
+	//console.log(inside_height);
+	//console.log(percentage);
+	$('#slider-val').val(percentage * 100);
 }
+
+function increment_slider(how_much_percentage) {
+	var percentage_to_change = how_much_percentage / 100;
+	var slider_height_string = $('.slider').css('height');
+	var inside_height_string = $('.slider-inside').css('height');
+	var slider_height = slider_height_string.substring(0, slider_height_string.length - 2) * 1;
+	var inside_height = inside_height_string.substring(0, inside_height_string.length - 2) * 1;
+	var current_percentage = (inside_height / slider_height);
+	var new_percentage = current_percentage - percentage_to_change;
+	var actual_percentage = 1 - new_percentage;
+	//console.log('new: ' + actual_percentage);
+	if (actual_percentage < 0) {
+		new_percentage = 1;
+	} else if (actual_percentage > 1) {
+		new_percentage = 0;
+	}
+	$('.slider-inside').css('height', (new_percentage * slider_height) + 'px' );
+	slider_updated();
+}
+
+function set_slider(new_percentage) {
+	new_percentage = new_percentage * 1;
+	//console.log('new: ' + new_percentage);
+	var slider_height_string = $('.slider').css('height');
+	var slider_height = slider_height_string.substring(0, slider_height_string.length - 2) * 1;
+	var actual_percentage = 1 - (new_percentage/100);
+	//console.log('actual: ' + actual_percentage);
+	if (actual_percentage < 0) {
+		new_percentage = 1;
+	} else if (actual_percentage > 1) {
+		new_percentage = 0;
+	}
+	$('.slider-inside').css('height', (actual_percentage * slider_height) + 'px' );
+	slider_updated();
+}
+
+$('#plus-twentyfive').click(function() {
+	increment_slider(25);
+});
+
+$('#minus-twentyfive').click(function() {
+	increment_slider(-25);
+});
+
+$('.set-percent-btn').click(function() {
+	set_slider($(this).attr('data-percent'));
+});
+
+$('#slider-val').keyup(function(e) {
+	if (e.keyCode == 13) {
+		set_slider($(this).val());
+	}
+});
+
+$('#slider-val').change(function(e) {
+	set_slider($(this).val());
+});
+
+slider_updated();
 
 </script>
 </body>
