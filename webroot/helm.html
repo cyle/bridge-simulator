@@ -1,7 +1,8 @@
 <!doctype html>
 <head>
 <title>THE HELM</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link rel="stylesheet" href="ship.css" />
 </head>
 <body id="helm">
@@ -40,14 +41,15 @@
 
 <div class="container">
 	<div class="map">
-		<p>(map and entity list)</p>
+		<!-- needs map and local entity list -->
+		<div id="map"></div>
 		<p>Current Position: <span class="position-x">0</span>, <span class="position-y">0</span>, <span class="position-z">0</span></p>
 	</div>
 	<div class="right-panel">
 		<div class="right-subpanel speed-controls">
 			<fieldset>
 				<legend>Speed Control 1</legend>
-				<!-- slider for speed -->
+				<!-- need big slider bar here for current speed -->
 				<p>Speed: <input id="speed" type="number" min="0" max="100" value="0" step="5" /></p>
 				<p>Max: <span class="max-speed">100</span></p>
 				<p>Max: <span calss="min-speed">0</span></p>
@@ -71,7 +73,6 @@
 		<div class="right-subpanel toggles">
 			<fieldset>
 				<legend>Overrides</legend>
-				<!-- toggles -->
 				<div class="button toggle" data-toggle-key="ramscoop"></div>
 				<div class="button toggle" data-toggle-key="plasma-recycle"></div>
 			</fieldset>
@@ -83,6 +84,7 @@
 		<fieldset>
 			<legend>Relative Bearing</legend>
 			<!-- pitch = up/down, yaw = left/right, roll = rotation -->
+			<!-- need two big circle/dial controls here -->
 			<p>Pitch: <input id="pitch" type="number" min="-360" max="360" value="0" step="5" /></p>
 			<p>Yaw: <input id="yaw" type="number" min="-360" max="360" value="0" step="5" /></p>
 		</fieldset>
@@ -101,11 +103,34 @@
 
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="two.min.js"></script>
 <script>
 
 var bridge_uuid;
 
 var socket = io();
+
+var two_params = { width: 500, height: 450, autostart: true, type: Two.Types.svg };
+var two = new Two(two_params).appendTo(document.getElementById('map'));
+var circle = two.makeCircle(50, 50, 10);
+//var rect = two.makeRectangle(213, 100, 100, 100);
+var triangle = two.makePolygon(50, 50, 70, 50, 60, 70);
+circle.fill = '#a00';
+circle.stroke = 'red'; // Accepts all valid css color
+circle.linewidth = 2;
+// rect.fill = 'rgb(0, 200, 255)';
+// rect.opacity = 0.75;
+// rect.noStroke();
+triangle.fill = 'rgb(0, 255, 0)';
+triangle.opacity = 0.75;
+triangle.noStroke();
+// render it all
+two.update();
+// any DOM event tracking has to be AFTER two.update() is run once
+document.getElementById(circle.id).addEventListener('click', function(e) {
+	//alert('CIRCLE!');
+	circle.fill = '#0f0';
+});
 
 // sending events to server:
 // socket.emit('event name to server', { "something": "what" });
@@ -156,8 +181,8 @@ socket.on('joined-bridge', function(data) {
 });
 
 socket.on('current-status', function(data) {
-	console.log('current status update from server');
-	console.log(data);
+	//console.log('current status update from server');
+	//console.log(data);
 	// set display conditions based on current status from server
 	
 	// handle HP, SP, energy
