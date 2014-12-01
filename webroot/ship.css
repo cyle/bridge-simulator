@@ -147,8 +147,12 @@ div.warning-indicator.on {
 
 body#helm div.map {
 	width: 500px;
-	height: 500px;
 	float: left;
+	margin-left: 1em;
+}
+
+body#helm div#map {
+	
 }
 
 body#helm div.speed-controls fieldset {

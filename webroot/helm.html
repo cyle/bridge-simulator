@@ -22,6 +22,7 @@
 		- navigation sensors = basic map of area around the ship
 			- markers for objects in space
 				- arrow-up means above, arrow-down means below, circle means same level
+				- red is enemy, green is friendly, grey-blue is neutral, white circle is you
 			- see current weapon target (red ring), current sensor target (blue ring)
 		- list of nearby things to navigate towards
 		- current engine status (if damaged, if being repaired, how much energy is allotted)
@@ -107,29 +108,61 @@
 <script>
 
 var bridge_uuid;
+var ship_position = { x: 0, y: 0, z: 0 };
+
+var sensor_objects = [];
+sensor_objects.push( { "id": 1, "name": "Test Enemy", "x": 100, "y": 100, "z": 0, "type": "enemy" } );
+sensor_objects.push( { "id": 2, "name": "Test Friendly", "x": -100, "y": -100, "z": 50, "type": "friendly" } );
+sensor_objects.push( { "id": 3, "name": "Test Neutral", "x": -100, "y": 100, "z": -50, "type": "neutral" } );
 
 var socket = io();
 
-var two_params = { width: 500, height: 450, autostart: true, type: Two.Types.svg };
+// two.js docs: http://jonobr1.github.io/two.js/#documentation
+var two_params = { width: 500, height: 500, autostart: true, type: Two.Types.svg };
 var two = new Two(two_params).appendTo(document.getElementById('map'));
-var circle = two.makeCircle(50, 50, 10);
+
+var ship_icon = two.makeCircle(two.width/2, two.height/2, 10);
+ship_icon.fill = '#ddd';
+ship_icon.noStroke();
+
+var sensor_range = two.makeCircle(two.width/2, two.height/2, two.height/2);
+sensor_range.noFill();
+sensor_range.stroke = 'white';
+sensor_range.opacity = 0.4;
+
+var weapons_range = two.makeCircle(two.width/2, two.height/2, 150);
+weapons_range.noFill();
+weapons_range.stroke = 'red';
+weapons_range.opacity = 0.4;
+
+var sensor_object_size = 10;
+
+var circle = two.makeCircle(231, 197, sensor_object_size);
 //var rect = two.makeRectangle(213, 100, 100, 100);
 var triangle = two.makePolygon(50, 50, 70, 50, 60, 70);
+triangle.translation.x += 260;
+triangle.translation.y += 220;
 circle.fill = '#a00';
-circle.stroke = 'red'; // Accepts all valid css color
-circle.linewidth = 2;
+circle.noStroke();
+//circle.stroke = 'red'; // Accepts all valid css color
+//circle.linewidth = 2;
 // rect.fill = 'rgb(0, 200, 255)';
 // rect.opacity = 0.75;
 // rect.noStroke();
-triangle.fill = 'rgb(0, 255, 0)';
+triangle.fill = 'rgb(64, 130, 175)';
 triangle.opacity = 0.75;
 triangle.noStroke();
 // render it all
 two.update();
 // any DOM event tracking has to be AFTER two.update() is run once
 document.getElementById(circle.id).addEventListener('click', function(e) {
-	//alert('CIRCLE!');
-	circle.fill = '#0f0';
+	circle.stroke = 'red';
+	circle.linewidth = 2;
+});
+
+document.getElementById(triangle.id).addEventListener('click', function(e) {
+	triangle.stroke = 'red';
+	triangle.linewidth = 2;
 });
 
 // sending events to server:
@@ -226,6 +259,9 @@ socket.on('current-status', function(data) {
 	
 	// handle position
 	if (data.position != undefined) {
+		ship_position.x = data.position.x;
+		ship_position.y = data.position.y;
+		ship_position.z = data.position.z;
 		$('.position-x').html(round_to_tenths(data.position.x));
 		$('.position-y').html(round_to_tenths(data.position.y));
 		$('.position-z').html(round_to_tenths(data.position.z));
@@ -265,6 +301,47 @@ socket.on('current-status', function(data) {
 		}
 	}
 });
+
+var map_framerate = (1/30) * 1000; // 30fps to ms
+
+setInterval(function() {
+	// go through sensor_objects and update positions relative to ours
+	for (var i = 0; i < sensor_objects.length; i++) {
+		// set local map view X and Y
+		sensor_objects[i].viewX = ship_icon.translation.x + ship_position.x + sensor_objects[i].x;
+		sensor_objects[i].viewY = ship_icon.translation.y + ship_position.y + sensor_objects[i].y;
+		// ok set its current position on the map
+		if (sensor_objects[i].symbol == undefined) {
+			if (sensor_objects[i].z > ship_position.z) {
+				sensor_objects[i].symbol = two.makePolygon(0, 0, 20, 0, 10, 20); // down arrow
+				sensor_objects[i].symbol.translation.x = sensor_objects[i].viewX;
+				sensor_objects[i].symbol.translation.y = sensor_objects[i].viewY;
+			} else if (sensor_objects[i].z < ship_position.z) {
+				sensor_objects[i].symbol = two.makePolygon(10, 0, 0, 20, 20, 20); // up arrow
+				sensor_objects[i].symbol.translation.x = sensor_objects[i].viewX;
+				sensor_objects[i].symbol.translation.y = sensor_objects[i].viewY;
+			} else {
+				sensor_objects[i].symbol = two.makeCircle(sensor_objects[i].viewX, sensor_objects[i].viewY, sensor_object_size);
+			}
+			sensor_objects[i].symbol.noStroke();
+			switch (sensor_objects[i].type) {
+				case 'enemy':
+				sensor_objects[i].symbol.fill = '#a00';
+				break;
+				case 'friendly':
+				sensor_objects[i].symbol.fill = 'rgb(0, 200, 0)';
+				break;
+				default: // includes neutral
+				sensor_objects[i].symbol.fill = 'rgb(64, 130, 175)';
+			}
+		} else {
+			sensor_objects[i].symbol.translation.x = sensor_objects[i].viewX;
+			sensor_objects[i].symbol.translation.y = sensor_objects[i].viewY;
+		}
+	}
+	// ok update map render
+	two.update();
+}, map_framerate);
 
 function round_to_tenths(number) {
 	return Math.round(number * 10)/10;
